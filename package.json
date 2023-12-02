@@ -10,7 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ramda": "^0.29.1"
+    "ramda": "^0.29.1",
+    "tap-color": "^1.2.0"
   },
   "devDependencies": {
     "tape": "^5.7.2"

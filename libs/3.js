@@ -5,48 +5,87 @@ const getNumbers = R.pipe(
     R.map(Number)
 );
 
-const mapIndexed = R.addIndex(R.map);
+const forEachIndexed = R.addIndex(R.forEach);
+let gears = [];
 
-function grid(data) {
-    const grid = R.pipe(
+const getSet = R.curry(function (part, input) {
+    gears = [];
+    const result = [];
+    const rows = R.pipe(
         R.split("\n"),
-        R.map(function (row) {
-            const chars = R.split("", row);
-            let characters = [];
-            let accum = ""
-            R.forEach(function (c) {
-                if (R.test(/\d/, c)) {
-                    accum = R.concat(accum, c);
-                    return;
-                }
-                if (accum.length && R.test(/\D/, c)) {
-                    characters = R.concat(
-                        characters,
-                        R.map(function (cc) {
-                            return {value: Number(accum), char: cc};
-                        }, R.split("", accum))
-                    );
-                    accum = "";
-                }
-                if (!accum.length && R.test(/\D/, c)) {
-                    characters = R.concat(characters, {value: c});
-                    return;
-                }
-            }, chars);
-            return characters;
-        })
-    )(data);
+        R.reject(R.isEmpty)
+    )(input);
+    const grid = R.map(R.pipe(
+        R.split(""),
+        R.reject(R.test(/\s/))
+        ), rows);
+    const rowTotal = rows.length;
+    const colTotal = rows[0].length;
 
-    return {};
-}
+    forEachIndexed(function (row, i) {
+        const numbers = Array.from(row.matchAll(/\d+/g));
+        R.forEach(function (capture) {
+            const number = capture[0];
+            const numLength = number.length;
+            const index =  capture.index;
+            let isPartNumber = false;
+            let minCol = Math.max(0, index - 1);
+            let maxCol = Math.min(index + numLength, colTotal - 1);
+            let minRow = Math.max(0, i - 1);
+            let maxRow = Math.min(rowTotal - 1, i + 1);
+            let ii = minRow;
 
-const getNonPartNumbers = R.identity;
+            while (ii <= maxRow) {
+                let jj = minCol;
+                while (jj <= maxCol) {
+                    isPartNumber ||= R.test(/[^.\d]/, grid[ii][jj]);
+                    if (grid[ii][jj] === "*") {
+                        const gear = R.find(({i, j}) => i === ii && j === jj, gears);
+                        if (gear) {
+                            gear.pns.push(Number(number));
+                        } else {
+                            gears.push({i: ii, j: jj, pns: [Number(number)]});
+                        }
+                    }
+                    jj += 1;
+                }
+                ii += 1;
+            }
+            if (part && isPartNumber) {
+                result.push(Number(number));
+            }
+            if (!part && !isPartNumber) {
+                result.push(Number(number));
+            }
+        }, numbers);
+    }, rows);
+
+    return result;
+});
+
+const getNonPartNumbers = getSet(false);
+const getPartNumbers = getSet(true);
 
 export default {
     getNonPartNumbers,
+    getPartNumbers,
     getNumbers,
     exec: {
-        a: R.identity,
-        b: R.identity
+        a: R.pipe(
+            getPartNumbers,
+            R.reduce(R.add, 0)
+        ),
+        b: R.pipe(
+            getPartNumbers,
+            () => R.transduce(
+                R.compose(
+                    R.filter(({pns}) => pns.length === 2),
+                    R.map(({pns}) => pns[0] * pns[1])
+                ),
+                R.add,
+                0,
+                gears
+            )
+        )
     }
 };

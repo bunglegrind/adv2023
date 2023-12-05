@@ -1,6 +1,4 @@
-import * as R from "ramda";
 import test from "tape";
-import c from "../libs/common.js";
 import lib from "../libs/3.js";
 
 const sample = `467..114..
@@ -35,5 +33,15 @@ test("Give me non part numbers",  function (t) {
         114,
         58
     ]);
+    t.end();
+});
+
+test("Sample first part", function (t) {
+    t.equal(lib.exec.a(sample), 4361);
+    t.end();
+});
+
+test("Sample second part", function (t) {
+    t.equal(lib.exec.b(sample), 467835);
     t.end();
 });

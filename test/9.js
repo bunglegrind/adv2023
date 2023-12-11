@@ -15,6 +15,21 @@ test("parse sample", function (t) {
     t.end();
 });
 
+test("Last number for first line is 18", function (t) {
+    t.equal(lib.calculateLastNumber(c.asNumbers(c.firstLine)(sample)), 18);
+    t.end();
+});
+
+test("Last number for second line is 28", function (t) {
+    t.equal(lib.calculateLastNumber(c.asNumbers(c.secondLine)(sample)), 28);
+    t.end();
+});
+
+test("Last number for third line is 68", function (t) {
+    t.equal(lib.calculateLastNumber(c.asNumbers(c.thirdLine)(sample)), 68);
+    t.end();
+});
+
 test.skip("Sample first part", function (t) {
         t.equal(lib.exec.a(sample), 114);
         t.end();

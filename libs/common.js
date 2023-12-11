@@ -9,6 +9,8 @@ const fifthLine = getLine(4);
 const sixthLine = getLine(5);
 const seventhLine = getLine(6);
 
+const asNumbers = (f) => R.pipe(f, R.split(" "), R.map(Number));
+
 export default {
     firstLine,
     secondLine,
@@ -16,5 +18,6 @@ export default {
     fourthLine,
     fifthLine,
     sixthLine,
-    seventhLine
+    seventhLine,
+    asNumbers
 };

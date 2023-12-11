@@ -11,25 +11,50 @@ const isZeroArray = R.all(R.equals(0));
 const calculateDifference = R.pipe(
     R.reverse,
     R.aperture(2),
-    R.map(([y, x]) => y - x)
+    R.map(([y, x]) => y - x),
+    R.reverse
 );
 
-const calculateLastNumber = function (seq) {
-    let differences = [];
+function getDeltas(seq) {
+    let differences = [seq];
     let diff = calculateDifference(seq);
     while (!isZeroArray(diff)) {
         differences.push(diff);
-        diff = calculateDifferences(diff);
+        diff = calculateDifference(diff);
     }
-    
-    return R.transduce(R.map(R.last), R. add, 0, differences);
-};
+
+    return differences;
+}
+
+const calculateLastNumber = R.pipe(
+    getDeltas,
+    R.transduce(R.map(R.last), R.add, 0)
+);
+
+const calculateFirstNumber = R.pipe(
+    getDeltas,
+    R.reverse,
+    R.transduce(
+        R.map(R.head),
+        (acc, item) => item - acc,
+        0
+    )
+);
 
 export default {
     parse,
     calculateLastNumber,
+    calculateFirstNumber,
     exec: {
-        a: R.identity,
-        b: R.identity
+        a: R.pipe(
+            parse,
+            R.map(calculateLastNumber),
+            R.reduce(R.add, 0)
+        ),
+        b: R.pipe(
+            parse,
+            R.map(calculateFirstNumber),
+            R.reduce(R.add, 0)
+        ),
     }
 };

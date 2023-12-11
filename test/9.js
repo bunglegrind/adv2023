@@ -30,12 +30,27 @@ test("Last number for third line is 68", function (t) {
     t.end();
 });
 
-test.skip("Sample first part", function (t) {
+test("First number for first line is -3", function (t) {
+    t.equal(lib.calculateFirstNumber(c.asNumbers(c.firstLine)(sample)), -3);
+    t.end();
+});
+
+test("First number for second line is 0", function (t) {
+    t.equal(lib.calculateFirstNumber(c.asNumbers(c.secondLine)(sample)), 0);
+    t.end();
+});
+
+test("Last number for third line is 5", function (t) {
+    t.equal(lib.calculateFirstNumber(c.asNumbers(c.thirdLine)(sample)), 5);
+    t.end();
+});
+
+test("Sample first part", function (t) {
         t.equal(lib.exec.a(sample), 114);
         t.end();
 });
 
-test.skip("Sample second part", function (t) {
-        t.equal(lib.exec.b(sample), 6);
+test("Sample second part", function (t) {
+        t.equal(lib.exec.b(sample), 2);
         t.end();
 });

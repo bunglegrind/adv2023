@@ -8,7 +8,7 @@ const findStart = function (map) {
     map = parse(map);
     console.log(map);
     const i = R.findIndex(R.includes("S"), map);
-    const j = R.indexOf("S", map);
+    const j = R.indexOf("S", map[i]);
 
     return [i, j];
 };
